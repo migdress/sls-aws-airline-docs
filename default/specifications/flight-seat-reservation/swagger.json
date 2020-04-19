@@ -1,0 +1,237 @@
+{
+    "swagger": "2.0",
+    "x-navigateMethodsByName": true,
+    "x-sortMethodsBy": [
+        "path",
+        "operation"
+    ],
+    "host": "flightseatreservation.com",
+    "info": {
+        "description": "This is small api for a flight seat reservation system",
+        "version": "1.0.0",
+        "title": "Flight Seat Reservation",
+        "contact": {
+            "email": "migdress@hotmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "tags": [
+        {
+            "name": "flights",
+            "description": "Flights"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/flights-list/{date_from}/{date_to}": {
+            "get": {
+                "tags": [
+                    "flights"
+                ],
+                "summary": "List flights",
+                "operationId": "flights-list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "date_from",
+                        "in": "path",
+                        "description": "the 'FROM' date criteria to search for flights",
+                        "required": true,
+                        "type": "string",
+                        "format": "date"
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "path",
+                        "description": "the 'TO' date criteria to search for flights",
+                        "required": true,
+                        "type": "string",
+                        "format": "date"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully list flights by derpature_date in range of dates, e.g. /fligts-list/{FROM}/{TO}",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Flight"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    }
+                }
+            }
+        },
+        "/reserve": {
+            "post": {
+                "tags": [
+                    "flight"
+                ],
+                "summary": "Reserve a seat",
+                "operationId": "seats-reserve",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Request for seats-reserve",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "title": "seats-reserve-request-body",
+                            "required": [
+                                "flight_id",
+                                "seat_id",
+                                "passenger_id"
+                            ],
+                            "properties": {
+                                "flight_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "unique id of the flight"
+                                },
+                                "seat_id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "unique id of the seat"
+                                },
+                                "passenger_id": {
+                                    "type": "string",
+                                    "description": "passenger identification"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Succesfully reserve a flight seat"
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/Errors"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Flight": {
+            "title": "Flight",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "departure": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "seats": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid"
+                            },
+                            "passenger_id": {
+                                "type": "string"
+                            },
+                            "row": {
+                                "type": "integer"
+                            },
+                            "letter": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "Errors": {
+            "title": "Errors",
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "message": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "departure": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "seats": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid"
+                            },
+                            "passenger_id": {
+                                "type": "string"
+                            },
+                            "row": {
+                                "type": "integer"
+                            },
+                            "letter": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
