@@ -3,7 +3,7 @@ SortOrder: 100
 
 # Arch
 
-[Link a Drive][link_arch]
+[Link to Google Drive][link_arch]
 
 ![arch](/flight-seat-reservation/arch.png)
 

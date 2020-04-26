@@ -2,6 +2,7 @@
     "swagger": "2.0",
     "x-navigateMethodsByName": true,
     "x-sortMethodsBy": [
+        "summary",
         "path",
         "operation"
     ],
@@ -22,19 +23,19 @@
     "tags": [
         {
             "name": "flights",
-            "description": "Flights"
+            "description": "Flights API"
         }
     ],
     "schemes": [
         "http"
     ],
     "paths": {
-        "/flights-list/{date_from}/{date_to}": {
+        "/flights/{date_from}/{date_to}": {
             "get": {
                 "tags": [
                     "flights"
                 ],
-                "summary": "List flights",
+                "summary": "01. List available flights",
                 "operationId": "flights-list",
                 "consumes": [
                     "application/json"
@@ -62,36 +63,67 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "successfully list flights by derpature_date in range of dates, e.g. /fligts-list/{FROM}/{TO}",
+                        "description": "successfully list available flights by derpature_date given a range of dates",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/Flight"
+                                "title": "Available flights",
+                                "type": "object",
+                                "properties": {
+                                    "departure": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "seats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "row": {
+                                                    "type": "integer"
+                                                },
+                                                "letter": {
+                                                    "type": "string",
+                                                    "minLength": 1,
+                                                    "maxLength": 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
                     "400": {
                         "description": "bad request",
                         "schema": {
-                            "$ref": "#/definitions/Errors"
+                            "$ref": "#/definitions/errors"
                         }
                     },
                     "404": {
-                        "description": "not found",
+                        "description": "no flights were found",
                         "schema": {
-                            "$ref": "#/definitions/Errors"
+                            "$ref": "#/definitions/errors"
                         }
                     }
                 }
             }
         },
-        "/reserve": {
+        "/flights/reserve": {
             "post": {
                 "tags": [
-                    "flight"
+                    "flights"
                 ],
-                "summary": "Reserve a seat",
-                "operationId": "seats-reserve",
+                "summary": "02. Reserve a seat",
+                "operationId": "flights-reserve-seat",
                 "consumes": [
                     "application/json"
                 ],
@@ -133,18 +165,24 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Succesfully reserve a flight seat"
+                        "description": "Seat reserved successfully"
                     },
                     "400": {
-                        "description": "bad request",
+                        "description": "malformed json, missing required fields",
                         "schema": {
-                            "$ref": "#/definitions/Errors"
+                            "$ref": "#/definitions/errors"
+                        }
+                    },
+                    "422": {
+                        "description": "<b>Unprocessable entity</b><br>flight or seat is not available",
+                        "schema": {
+                            "$ref": "#/definitions/errors"
                         }
                     },
                     "404": {
-                        "description": "not found",
+                        "description": "flight or seat not found",
                         "schema": {
-                            "$ref": "#/definitions/Errors"
+                            "$ref": "#/definitions/errors"
                         }
                     }
                 }
@@ -152,7 +190,7 @@
         }
     },
     "definitions": {
-        "Flight": {
+        "flight": {
             "title": "Flight",
             "type": "object",
             "properties": {
@@ -189,46 +227,14 @@
                 }
             }
         },
-        "Errors": {
-            "title": "Errors",
+        "errors": {
+            "title": "errors",
             "type": "object",
             "properties": {
                 "errors": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "message": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "departure": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "seats": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "string",
-                                "format": "uuid"
-                            },
-                            "passenger_id": {
-                                "type": "string"
-                            },
-                            "row": {
-                                "type": "integer"
-                            },
-                            "letter": {
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 1
-                            }
-                        }
+                        "type": "string"
                     }
                 }
             }
